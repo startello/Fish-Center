@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<title><ui:insert name="title"></ui:insert></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<h:outputStylesheet library="css" name="fonts.css" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<h:outputStylesheet library="css" name="bootstrap-datepicker3.min.css" />
+	<h:outputStylesheet library="css" name="material.css" />
+	<h:outputStylesheet library="css" name="bootstrap-select.css" />
+	<h:outputStylesheet library="css" name="custom.css" />
+</h:head>
+
+<h:body>
+	<div id="wrap">
+
+		<div id="header">
+			<ui:insert name="header">
+				<ui:include src="header.xhtml" />
+			</ui:insert>
+		</div>
+		<div id="content">
+			<ui:insert name="content">
+				<ui:include src="content.xhtml" />
+			</ui:insert>
+		</div>
+		<div id="footer">
+			<ui:insert name="footer">
+				<ui:include src="footer.xhtml" />
+			</ui:insert>
+		</div>
+	</div>
+	<h:outputScript library="primefaces" name="jquery/jquery.js" />
+	<h:outputScript library="js" name="bootstrap.min.js" />
+	<h:outputScript library="js" name="bootstrap-datepicker.min.js" />
+	<h:outputScript library="js" name="material.js" />
+	<h:outputScript library="js" name="bootstrap-select.js" />
+	<script type="text/javascript">
+		function materialInit() {
+			$.material.init();
+		}
+		function checkboxInit() {
+			$.material.checkbox();
+		}
+		$(document).ready(function() {
+			materialInit();
+		});
+	</script>
+	<script type="text/javascript">
+		$(function() {
+			$('#arrival').datepicker({
+				format : "dd.mm.yyyy",
+				startDate : new Date()
+			});
+			$('#shipment').datepicker({
+				format : "dd.mm.yyyy",
+				startDate : new Date()
+			});
+			$('#sandbox-container').datepicker({
+				format : "dd.mm.yyyy",
+				endDate : new Date()
+			});
+		});
+	</script>
+	<script type="text/javascript">
+		function reloadDropdown() {
+			$('.dropdown-menu').find('.form-horizontal').click(function(e) {
+				e.stopPropagation();
+			});
+			$('.dropdown-menu').find('.form-horizontal').click(function(e) {
+				e.stopPropagation();
+			});
+		}
+		$(document).ready(function() {
+			//Handles menu drop down
+			reloadDropdown();
+		});
+	</script>
+	<script type="text/javascript">
+		function reloadSelectpicker() {
+			$('.selectpicker').selectpicker({
+				style : 'form-control',
+				width : '100%'
+			});
+		}
+	</script>
+	<script type='text/javascript'>
+		$(document)
+				.ready(
+						function() {
+
+							$('#openBtn').click(function() {
+								$('#myModal').modal({
+									show : true
+								})
+							});
+
+							$('.modal')
+									.on(
+											'hidden.bs.modal',
+											function(event) {
+												$(this).removeClass(
+														'fv-modal-stack');
+												$('body')
+														.data(
+																'fv_open_modals',
+																$('body')
+																		.data(
+																				'fv_open_modals') - 1);
+											});
+
+							$('.modal')
+									.on(
+											'shown.bs.modal',
+											function(event) {
+
+												// keep track of the number of open modals
+												reloadSelectpicker();
+												if (typeof ($('body')
+														.data('fv_open_modals')) == 'undefined') {
+													$('body')
+															.data(
+																	'fv_open_modals',
+																	0);
+												}
+
+												// if the z-index of this modal has been set, ignore.
+
+												if ($(this).hasClass(
+														'fv-modal-stack')) {
+													return;
+												}
+
+												$(this).addClass(
+														'fv-modal-stack');
+
+												$('body')
+														.data(
+																'fv_open_modals',
+																$('body')
+																		.data(
+																				'fv_open_modals') + 1);
+
+												$(this)
+														.css(
+																'z-index',
+																1040 + (10 * $(
+																		'body')
+																		.data(
+																				'fv_open_modals')));
+
+												$('.modal-backdrop')
+														.not('.fv-modal-stack')
+														.css(
+																'z-index',
+																1039 + (10 * $(
+																		'body')
+																		.data(
+																				'fv_open_modals')));
+
+												$('.modal-backdrop')
+														.not('fv-modal-stack')
+														.addClass(
+																'fv-modal-stack');
+
+											});
+
+						});
+	</script>
+	<script>
+		$(document).ready(function() {
+			$('[data-toggle="popover"]').popover();
+		});
+	</script>
+</h:body>
+</h:html>

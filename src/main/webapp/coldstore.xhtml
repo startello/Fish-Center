@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Cold Strore Manager</ui:define>
+		<ui:define name="content">
+			<ui:fragment rendered="#{loginBean.user.type == 2}">
+				<div class="container">
+					<ui:fragment rendered="#{not empty coldStoreManagerBean.unarrived}">
+						<div class="col-sm-12">
+							<h3>Parcels</h3>
+							<h:form>
+								<h:dataTable value="#{coldStoreManagerBean.unarrived}"
+									var="item" styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Name</f:facet>
+										<h:outputText value="#{item.name}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Ship Name</f:facet>
+										<h:outputText value="#{item.shipName}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Arrival Date</f:facet>
+										<h:outputText value="#{item.arrivalDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column headerClass="table-button">
+										<f:facet name="header">Confirm Arrival</f:facet>
+										<h:commandLink class="btn btn-primary glyphicon glyphicon-ok"
+											value="" action="#{parcelBean.confirmParcel(item.id)}"
+											style="padding:0; width:20px; height:20px; margin:0;">
+										</h:commandLink>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+
+						</div>
+					</ui:fragment>
+					<ui:fragment rendered="#{not empty coldStoreManagerBean.arrived}">
+						<div class="col-sm-12">
+							<h3>Cold Store Items</h3>
+							<h:form>
+								<h:dataTable value="#{coldStoreManagerBean.arrived}" var="item"
+									styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Fish Type</f:facet>
+										<h:outputText value="#{item.fishType.name} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Weight</f:facet>
+										<h:outputText value="#{item.weightLeft} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Price</f:facet>
+										<h:outputText value="#{item.sellingPrice} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Arrival Date</f:facet>
+										<h:outputText value="#{item.arrivalDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column headerClass="table-button">
+										<f:facet name="header">Write-Off</f:facet>
+										<div class="btn-toolbar">
+											<h:commandLink
+												styleClass="btn btn-primary glyphicon glyphicon-remove"
+												ps:data-toggle="modal" ps:data-target=".writeOff-modal"
+												actionListener="#{parcelBean.writeOffModal(item.id)}">
+												<f:ajax render=":writeOffModalForm:modalTitle" />
+											</h:commandLink>
+										</div>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+
+						</div>
+					</ui:fragment>
+					<ui:fragment rendered="#{not empty coldStoreManagerBean.forWriteOff}">
+						<div class="col-sm-12">
+							<h3>Cold Store Items</h3>
+							<h:form>
+								<h:dataTable value="#{coldStoreManagerBean.forWriteOff}" var="item"
+									styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Fish Type</f:facet>
+										<h:outputText value="#{item.fishType.name} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Weight</f:facet>
+										<h:outputText value="#{item.weightLeft} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Price</f:facet>
+										<h:outputText value="#{item.sellingPrice} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Arrival Date</f:facet>
+										<h:outputText value="#{item.arrivalDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column headerClass="table-button">
+										<f:facet name="header">Write-Off</f:facet>
+										<div class="btn-toolbar">
+											<h:commandLink
+												styleClass="btn btn-primary glyphicon glyphicon-remove"
+												ps:data-toggle="modal" ps:data-target=".writeOff-modal"
+												actionListener="#{parcelBean.writeOffModal(item.id)}">
+												<f:ajax render=":writeOffModalForm:modalTitle" />
+											</h:commandLink>
+										</div>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+
+						</div>
+					</ui:fragment>
+					<div class="modal fade writeOff-modal" role="dialog"
+						aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<h:form id="writeOffModalForm">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+										<h4 class="modal-title" id="gridSystemModalLabel">
+											Confirm Write-Off</h4>
+									</div>
+									<div class="modal-body">
+										<div class="container-fluid">
+											<div class="row">
+												<h5 style="margin-bottom: 40px;">
+													Do you really want to write-off
+													<h:outputText id="modalTitle"
+														value=" #{parcelBean.writeOffItem.fishType.name} " />
+													?
+												</h5>
+												<div class="form-horizontal">
+													<div class="btn-toolbar">
+														<h:commandButton type="submit" value="Write-Off"
+															action="#{parcelBean.writeOffCsi}"
+															styleClass="btn btn-primary pull-right">
+														</h:commandButton>
+														<button type="button" data-dismiss="modal"
+															class="btn btn-default pull-right">Cancel</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</h:form>
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+					<!-- /.modal -->
+					<ui:fragment
+						rendered="#{not empty coldStoreManagerBean.parcelOrders}">
+						<div class="col-sm-12">
+							<h3>Parcel Orders</h3>
+							<h:form>
+								<h:dataTable value="#{coldStoreManagerBean.parcelOrders}"
+									var="item" styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Customer</f:facet>
+										<h:outputText value="#{item.user.name} #{item.user.surname}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Creation Date</f:facet>
+										<h:outputText value="#{item.creationDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">Shipment Date</f:facet>
+										<h:outputText value="#{item.shipmentDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column headerClass="table-button">
+										<f:facet name="header">Confirm Shipment</f:facet>
+										<div class="btn-toolbar">
+											<h:commandLink
+												styleClass="btn btn-primary glyphicon glyphicon-ok"
+												ps:data-toggle="modal" ps:data-target=".shipment-modal"
+												actionListener="#{parcelOrderBean.shipmentModal(item.id)}">
+												<f:ajax
+													render=":shipmentModalForm:parcelItems
+											:shipmentModalForm:customerText
+											:shipmentModalForm:creationDateText
+											:shipmentModalForm:shipmentDateText" />
+											</h:commandLink>
+										</div>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+							<div class="modal fade shipment-modal" role="dialog"
+								aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<h:form id="shipmentModalForm">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="gridSystemModalLabel">
+													Confirm Shipment</h4>
+											</div>
+											<div class="modal-body">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="form-horizontal">
+															<div class="form-group">
+																<label class="control-label col-sm-3" for="customer">
+																	Customer:</label>
+																<div class="col-sm-9">
+																	<p class="form-control-static" id="left">
+																		<h:outputText id="customerText"
+																			value="#{parcelOrderBean.confirmOrder.user.name} #{parcelOrderBean.confirmOrder.user.surname}" />
+																	</p>
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label col-sm-3" for="creationDate">
+																	Creation Date:</label>
+																<div class="col-sm-9">
+																	<p class="form-control-static" id="creationDate">
+																		<h:outputText
+																			value="#{parcelOrderBean.confirmOrder.creationDate}"
+																			id="creationDateText">
+																			<f:converter converterId="dateConverter" />
+																		</h:outputText>
+																	</p>
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label col-sm-3" for="shipmentDate">
+																	Shipment Date:</label>
+																<div class="col-sm-9">
+																	<p class="form-control-static" id="shipmentDate">
+																		<h:outputText
+																			value="#{parcelOrderBean.confirmOrder.shipmentDate}"
+																			id="shipmentDateText">
+																			<f:converter converterId="dateConverter" />
+																		</h:outputText>
+																	</p>
+																</div>
+															</div>
+															<h:dataTable
+																value="#{parcelOrderBean.confirmOrder.parcelOrderItems}"
+																var="item"
+																styleClass="table table-striped table-responsive"
+																id="parcelItems">
+																<h:column>
+																	<f:facet name="header">Fish Type</f:facet>
+																	<h:outputText
+																		value="#{item.coldStoreItem.fishType.name} " />
+																</h:column>
+																<h:column>
+																	<f:facet name="header">Weight</f:facet>
+																	<h:outputText value="#{item.weight} " />
+																</h:column>
+															</h:dataTable>
+															<div class="btn-toolbar">
+																<h:commandButton type="submit" value="Confirm"
+																	action="#{parcelOrderBean.commitShipment}"
+																	styleClass="btn btn-primary pull-right">
+																</h:commandButton>
+																<button type="button" data-dismiss="modal"
+																	class="btn btn-default pull-right">Cancel</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</h:form>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+						</div>
+					</ui:fragment>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

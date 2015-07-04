@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Security Officer</ui:define>
+		<ui:define name="content">
+			<ui:fragment rendered="#{loginBean.user.type == 4}">
+				<div class="container">
+					<div class="col-sm-12">
+						<h3>Users</h3>
+						<h:form>
+							<h:dataTable value="#{securityOfficerBean.users}" var="item"
+								styleClass="table table-striped"
+								rendered="#{not empty securityOfficerBean.users}">
+								<h:column>
+									<f:facet name="header">Name</f:facet>
+									<h:outputText value="#{item.name} #{item.surname}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">E-mail</f:facet>
+									<h:outputText value="#{item.email} " />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Type</f:facet>
+									<h:outputText
+										value="#{securityOfficerBean.rolesArray[item.type]} " />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Creation Date</f:facet>
+									<h:outputText value="#{item.creationDate}">
+										<f:converter converterId="dateConverter" />
+									</h:outputText>
+								</h:column>
+								<h:column headerClass="table-button">
+									<f:facet name="header">Enabled</f:facet>
+									<ui:fragment rendered="#{item.status==0}">
+										<div class="glyphicon glyphicon-ok"></div>
+									</ui:fragment>
+									<ui:fragment rendered="#{item.status==1}">
+										<div class="glyphicon glyphicon-remove"></div>
+									</ui:fragment>
+								</h:column>
+								<h:column headerClass="table-button">
+									<f:facet name="header">Edit</f:facet>
+									<h:commandLink
+										styleClass="btn btn-primary glyphicon glyphicon-pencil"
+										ps:data-toggle="modal" ps:data-target=".user-modal">
+										<f:ajax render=":userModalForm"
+											listener="#{userBean.edit(item.id)}" />
+									</h:commandLink>
+								</h:column>
+							</h:dataTable>
+							<div class="btn-toolbar">
+								<h:commandLink styleClass="btn btn-primary pull-right "
+									value="Add" ps:data-toggle="modal" ps:data-target=".user-modal">
+									<f:ajax render=":userModalForm" listener="#{userBean.clear}" />
+								</h:commandLink>
+							</div>
+						</h:form>
+						<div class="modal fade user-modal" role="dialog"
+							aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<h:form id="userModalForm">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+											<h4 class="modal-title" id="gridSystemModalLabel">User</h4>
+										</div>
+										<div class="modal-body">
+											<div class="container-fluid">
+												<div class="row">
+													<div class="form-horizontal">
+														<div class="form-group">
+															<label class="control-label col-sm-4" for="activity">Activity:</label>
+															<div class="col-sm-8">
+																<h:selectOneMenu styleClass="selectpicker form-control"
+																	id="activity" value="#{userBean.user.status}">
+																	<f:selectItems value="#{securityOfficerBean.statuses}" />
+																</h:selectOneMenu>
+															</div>
+
+														</div>
+														<h:message for="activity"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="form-group ">
+															<label class="control-label col-sm-4" for="name">Name:</label>
+															<div class="col-sm-8">
+																<h:inputText styleClass="form-control" id="name"
+																	value="#{userBean.user.name}" required="true"
+																	requiredMessage="#{messageBean.required}" />
+															</div>
+
+														</div>
+														<h:message for="name"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="form-group">
+															<label class="control-label col-sm-4" for="surname">Surname:</label>
+															<div class="col-sm-8">
+																<h:inputText styleClass="form-control" id="surname"
+																	value="#{userBean.user.surname}" required="true"
+																	requiredMessage="#{messageBean.required}" />
+															</div>
+
+														</div>
+														<h:message for="surname"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="form-group">
+															<label class="control-label col-sm-4" for="enterEmail">Email
+																address:</label>
+															<div class="col-sm-8">
+																<h:inputText styleClass="form-control" id="enterEmail"
+																	value="#{userBean.user.email}" required="true"
+																	requiredMessage="#{messageBean.required}">
+																	<f:validator validatorId="emailValidator" />
+																</h:inputText>
+															</div>
+
+														</div>
+														<h:message for="enterEmail"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="form-group">
+															<label class="control-label col-sm-4" for="enterPassword">Password:</label>
+															<div class="col-sm-8">
+																<h:inputText styleClass="form-control"
+																	id="enterPassword" value="#{userBean.user.password}"
+																	required="true"
+																	requiredMessage="#{messageBean.required}">
+																	<f:validator validatorId="passwordValidator" />
+																</h:inputText>
+															</div>
+
+														</div>
+														<h:message for="enterPassword"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="form-group">
+															<label class="control-label col-sm-4" for="type">Type:</label>
+															<div class="col-sm-8">
+																<h:selectOneMenu styleClass="selectpicker form-control"
+																	value="#{userBean.user.type}" id="type">
+																	<f:selectItems value="#{securityOfficerBean.roles}" />
+																</h:selectOneMenu>
+															</div>
+
+														</div>
+														<h:message for="type"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="btn-toolbar">
+															<h:commandButton type="submit" value="Save"
+																actionListener="#{userBean.save}"
+																styleClass="btn btn-primary pull-right">
+																<f:ajax execute="@form" render="@form"
+																	onevent="reloadSelectpicker" />
+															</h:commandButton>
+															<button type="button" data-dismiss="modal"
+																class="btn btn-default pull-right">Cancel</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</h:form>
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<!-- /.modal -->
+					</div>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Fish Center</ui:define>
+		<ui:define name="content">
+			<div class="container">
+				<div class="page-header">
+					<h1>Fish Center</h1>
+				</div>
+				<h:form id="goodsList">
+					<h:dataTable value="#{indexBean.gli}" var="item"
+						styleClass="table table-striped"
+						rendered="#{not empty indexBean.gli}" id="goodsTable">
+						<h:column headerClass="fishType">
+							<p:graphicImage styleClass="img-circle"
+								value="#{imageBean.imageById}"
+								rendered="#{imageBean.hasImage(item.fishId)}" height="96"
+								width="96">
+								<f:param name="itemId" value="#{item.fishId}" cache="false" />
+							</p:graphicImage>
+							<div style="margin-top: 10px; padding-left: 86px;">
+								<b><h:outputText value="#{item.fishName} " /></b>
+							</div>
+						</h:column>
+						<h:column headerClass="weight">
+							<f:facet name="header">Weight</f:facet>
+							<h:outputText value="#{item.weight} t" />
+						</h:column>
+						<h:column headerClass="price">
+							<f:facet name="header">Price</f:facet>
+							<h:outputText value="#{item.price} $" />
+						</h:column>
+						<h:column headerClass="cart">
+							<f:facet name="header">Cart</f:facet>
+							<h:outputText
+								value="#{cartBean.getWeightInTheCart(item.id)} t (#{cartBean.getWeightInTheCart(item.id)*item.price} $)"
+								rendered="#{!(cartBean.getWeightInTheCart(item.id).equals('0.0'))}" />
+						</h:column>
+						<h:column headerClass="table-button">
+							<f:facet name="header">Add</f:facet>
+							<div class="btn-toolbar">
+								<h:commandLink
+									styleClass="btn btn-primary glyphicon glyphicon-plus"
+									ps:data-toggle="modal" ps:data-target=".add-modal"
+									actionListener="#{cartBean.setModal(item.id)}">
+									<f:ajax execute="@form"
+										render=":modalItemForm:weight 
+										:modalItemForm:weightMessage 
+										:modalItemForm:modalTitle
+										:modalItemForm:leftText
+										:modalItemForm:inTheCartText" />
+								</h:commandLink>
+							</div>
+						</h:column>
+					</h:dataTable>
+				</h:form>
+
+				<div class="modal fade add-modal" role="dialog"
+					aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<h:form id="modalItemForm">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+									<h4 class="modal-title" id="gridSystemModalLabel">
+										Add
+										<h:outputText id="modalTitle"
+											value=" #{cartBean.modalItem.fishName} " />
+										to cart
+									</h4>
+								</div>
+								<div class="modal-body">
+									<div class="container-fluid">
+										<div class="row">
+											<div class="form-horizontal">
+												<div class="form-group">
+													<label class="control-label col-sm-3" for="left">
+														Left:</label>
+													<div class="col-sm-9">
+														<p class="form-control-static" id="left">
+															<h:outputText id="leftText"
+																value="#{cartBean.modalItem.weight} t" />
+														</p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="control-label col-sm-3" for="inTheCart">
+														In the cart:</label>
+													<div class="col-sm-9">
+														<p class="form-control-static" id="inTheCart">
+															<h:outputText id="inTheCartText"
+																value="#{cartBean.weightInTheCart} t (#{cartBean.weightInTheCart*cartBean.modalItem.price} $)" />
+														</p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="control-label col-sm-3" for="weight">
+														Set weight:</label>
+													<div class="col-sm-9">
+														<h:inputText styleClass="form-control" id="weight"
+															value="#{cartBean.weight}" required="true"
+															validator="#{cartBean.validateWeightRange}"
+															requiredMessage="#{messageBean.required}" />
+													</div>
+												</div>
+												<h:message id="weightMessage" for="weight"
+													class="alert alert-danger col-sm-9 col-sm-offset-3" />
+
+												<div class="btn-toolbar">
+													<h:commandButton type="submit" value="Add"
+														actionListener="#{cartBean.addToCart()}"
+														styleClass="btn btn-primary pull-right">
+														<f:param name="id" value="1" />
+														<f:ajax execute="@form"
+															render="weight weightMessage inTheCartText 
+															:goodsList:goodsTable :cartButton" />
+													</h:commandButton>
+													<h:commandButton type="reset" value="Reset"
+														actionListener="#{cartBean.resetWeight}"
+														styleClass="btn btn-default pull-right">
+														<f:ajax render="weight weightMessage inTheCartText" />
+													</h:commandButton>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- /.modal -->
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

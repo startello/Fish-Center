@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+	<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+		<ui:define name="title">Accountant</ui:define>
+		<ui:define name="content">
+			<ui:fragment rendered="#{loginBean.user.type == 3}">
+				<div class="container">
+					<ui:fragment rendered="#{not empty accountantBean.parcelOrders}">
+						<div class="col-sm-12">
+							<h3>Parcel Orders</h3>
+							<h:form>
+								<h:dataTable value="#{accountantBean.parcelOrders}" var="item"
+									styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Customer</f:facet>
+										<h:outputText value="#{item.user.name} #{item.user.surname}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Bank Account</f:facet>
+										<h:outputText value="#{item.bankAccount} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Sum to pay</f:facet>
+										<h:outputText value="#{item.sumToPay} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Payed</f:facet>
+										<h:outputText value="#{item.sumPayed} " />
+									</h:column>
+
+									<h:column>
+										<f:facet name="header">Creation Date</f:facet>
+										<h:outputText value="#{item.creationDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<h:commandLink class="btn btn-primary glyphicon glyphicon-ok"
+											action="#{parcelOrderBean.addPayments(item.id)}">
+										</h:commandLink>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+						</div>
+					</ui:fragment>
+					<ui:fragment rendered="#{not empty accountantBean.ordersToReturn}">
+						<div class="col-sm-12">
+							<h3>Orders To Return</h3>
+							<h:form>
+								<h:dataTable value="#{accountantBean.ordersToReturn}" var="item"
+									styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Customer</f:facet>
+										<h:outputText value="#{item.user.name} #{item.user.surname}" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Bank Account</f:facet>
+										<h:outputText value="#{item.bankAccount} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Payed</f:facet>
+										<h:outputText value="#{item.sumPayed} " />
+									</h:column>
+									<h:column>
+										<h:commandLink class="btn btn-primary glyphicon glyphicon-ok"
+											action="#{parcelOrderBean.addPayments(item.id)}">
+										</h:commandLink>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+						</div>
+					</ui:fragment>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

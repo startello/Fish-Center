@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Add Parcel</ui:define>
+		<ui:define name="content">
+			<ui:fragment rendered="#{loginBean.user.type == 1}">
+				<div class="container">
+					<div class="col-sm-6" style="margin-top: 20px;">
+						<h:form id="parcelItems">
+							<div class="panel panel-primary">
+
+								<div class="panel-heading">Parcel Items</div>
+								<div class="panel-body">
+									<h:dataTable value="#{parcelBean.parcel.coldStoreItems}"
+										var="item" styleClass="table table-striped"
+										rendered="#{not empty parcelBean.parcel.coldStoreItems}">
+										<h:column>
+											<f:facet name="header">Fish Type</f:facet>
+											<h:outputText value="#{item.fishType.name} " />
+										</h:column>
+										<h:column>
+											<f:facet name="header">Weight Purchased</f:facet>
+											<h:outputText value="#{item.weightPurchased} " />
+
+										</h:column>
+										<h:column>
+											<f:facet name="header">Purchase Price</f:facet>
+											<h:outputText value="#{item.purchasePrice} " />
+
+										</h:column>
+										<h:column>
+											<f:facet name="header">Storage Price</f:facet>
+											<h:outputText value="#{item.storagePrice}" />
+										</h:column>
+										<h:column headerClass="table-button">
+											<f:facet name="header">Remove</f:facet>
+											<h:commandLink
+												styleClass="btn btn-primary glyphicon glyphicon-remove"
+												action="#{parcelBean.removeCsi(item)}">
+											</h:commandLink>
+										</h:column>
+									</h:dataTable>
+								</div>
+								<div class="panel-footer">
+									<div class="btn-toolbar">
+										<h:commandLink value="Add" type="button"
+											styleClass="btn btn-primary pull-right"
+											ps:data-toggle="modal" ps:data-target=".add-csi-modal">
+											<f:ajax render=":addParcelForm" />
+										</h:commandLink>
+									</div>
+								</div>
+							</div>
+						</h:form>
+						<div class="modal fade add-csi-modal" role="dialog"
+							aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+										<h4 class="modal-title" id="gridSystemModalLabel">Add
+											parcel item</h4>
+									</div>
+									<div class="modal-body">
+										<div class="container-fluid">
+											<div class="col-sm-6">
+												<h:form class="form-horizontal" id="addParcelForm">
+													<div class="form-group">
+														<label class="control-label col-sm-3" for="fishType">Fish
+															Type:</label>
+														<div class="col-sm-9">
+															<h:selectOneMenu styleClass="selectpicker form-control"
+																id="fishType" value="#{parcelBean.ftid}"
+																style="padding-top:10px;"
+																validator="#{parcelBean.validateFishType}">
+																<f:selectItems value="#{parcelBean.ftList}" var="ft"
+																	itemLabel="#{ft.name}" itemValue="#{ft.id}" />
+															</h:selectOneMenu>
+														</div>
+													</div>
+													<h:message for="fishType"
+														class="alert alert-danger col-sm-9 col-sm-offset-3" />
+													<div class="form-group">
+														<label class="control-label col-sm-3"
+															for="weightPurchased">Weight:</label>
+														<div class="col-sm-9">
+															<h:inputText type="text" class="form-control"
+																id="weightPurchased"
+																value="#{parcelBean.csi.weightPurchased}"
+																required="true"
+																requiredMessage="#{messageBean.required}"
+																validatorMessage="#{messageBean.positive}">
+																<f:validateDoubleRange minimum="0.01" />
+															</h:inputText>
+														</div>
+
+													</div>
+													<h:message for="weightPurchased"
+														class="alert alert-danger col-sm-9 col-sm-offset-3" />
+
+													<div class="form-group">
+														<label class="control-label col-sm-3" for="purchasePrice">Price:</label>
+														<div class="col-sm-9">
+															<h:inputText type="text" class="form-control"
+																id="purchasePrice"
+																value="#{parcelBean.csi.purchasePrice}" required="true"
+																requiredMessage="#{messageBean.required}"
+																validatorMessage="#{messageBean.positive}">
+																<f:validateDoubleRange minimum="0.01" />
+															</h:inputText>
+														</div>
+
+													</div>
+													<h:message for="purchasePrice"
+														class="alert alert-danger col-sm-9 col-sm-offset-3" />
+
+													<div class="form-group">
+														<label class="control-label col-sm-3" for="storagePrice">Storage
+															Price:</label>
+														<div class="col-sm-9">
+															<h:inputText type="text" class="form-control"
+																id="storagePrice" value="#{parcelBean.csi.storagePrice}"
+																required="true"
+																requiredMessage="#{messageBean.required}"
+																validatorMessage="#{messageBean.positive}">
+																<f:validateDoubleRange minimum="0.01" />
+															</h:inputText>
+														</div>
+
+													</div>
+													<h:message for="storagePrice"
+														class="alert alert-danger col-sm-9 col-sm-offset-3" />
+													<div class="btn-toolbar">
+														<h:commandButton value="Add"
+															action="#{parcelBean.saveColdStoreItem}"
+															styleClass="btn btn-primary pull-right">
+															<f:ajax execute="@form" render="@form :parcelItems"
+																onevent="reloadSelectpicker" />
+														</h:commandButton>
+														<h:commandButton value="Reset"
+															styleClass="btn btn-default pull-right">
+															<f:ajax render="@form" />
+														</h:commandButton>
+
+													</div>
+												</h:form>
+											</div>
+											<div class="col-sm-6">
+												<h:form id="fishTypes">
+													<div style="height: 70vh; overflow: auto;">
+														<ui:fragment
+															rendered="#{not empty generalManagerBean.fishTypes}">
+															<h:dataTable value="#{generalManagerBean.fishTypes}"
+																var="item" styleClass="table table-striped fishtable"
+																style="vertical-align: middle;">
+																<h:column headerClass="image">
+																	<f:facet name="header">Image</f:facet>
+																	<p:graphicImage styleClass="img-circle"
+																		value="#{imageBean.imageById}"
+																		rendered="#{imageBean.hasImage(item.id)}" height="96"
+																		width="96">
+																		<f:param name="itemId" value="#{item.id}"
+																			cache="false" />
+																	</p:graphicImage>
+																</h:column>
+																<h:column>
+																	<f:facet name="header">Name</f:facet>
+																	<h:commandLink value="#{item.name}"
+																		ps:data-trigger="focus" ps:data-toggle="popover"
+																		ps:data-content="#{item.description}">
+																		<f:ajax />
+																	</h:commandLink>
+																</h:column>
+																<h:column headerClass="table-button">
+																	<f:facet name="header">Edit</f:facet>
+																	<h:commandLink
+																		class="btn btn-primary glyphicon glyphicon-pencil"
+																		value=""
+																		actionListener="#{fishTypeBean.editFishType(item.id)}"
+																		ps:data-toggle="modal"
+																		ps:data-target=".add-fishType-modal"
+																		style="padding:0; width:20px; height:20px; margin:0;">
+																		<f:ajax render=":fishTypeForm" />
+																	</h:commandLink>
+																</h:column>
+															</h:dataTable>
+														</ui:fragment>
+													</div>
+													<div class="btn-toolbar">
+														<h:commandButton type="button"
+															styleClass="btn btn-primary pull-right"
+															value="Add Fish Type" ps:data-toggle="modal"
+															ps:data-target=".add-fishType-modal">
+															<f:ajax render=":fishTypeForm"
+																listener="#{fishTypeBean.clear}" />
+														</h:commandButton>
+													</div>
+												</h:form>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<!-- /.modal -->
+						<div class="modal fade add-fishType-modal" role="dialog"
+							aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+										<h4 class="modal-title" id="gridSystemModalLabel">Fish
+											type</h4>
+									</div>
+									<div class="modal-body">
+										<div class="container-fluid">
+											<div class="row">
+												<h:form enctype="multipart/form-data" id="fishTypeForm">
+													<div class="form-horizontal">
+														<div class="form-group">
+															<label class="control-label col-sm-3" for="name">Name:</label>
+															<div class="col-sm-9">
+																<h:inputText styleClass="form-control" id="name"
+																	value="#{fishTypeBean.fishType.name}" required="true"
+																	requiredMessage="#{messageBean.required}" />
+															</div>
+
+														</div>
+														<h:message for="name"
+															class="alert alert-danger col-sm-9 col-sm-offset-3" />
+
+														<div class="form-group">
+															<label class="control-label col-sm-3" for="description">Description:</label>
+															<div class="col-sm-9">
+																<h:inputTextarea rows="4" styleClass="form-control"
+																	id="description"
+																	value="#{fishTypeBean.fishType.description}"
+																	required="false"
+																	requiredMessage="#{messageBean.required}" />
+															</div>
+
+														</div>
+														<h:message for="description"
+															class="alert alert-danger col-sm-9 col-sm-offset-3" />
+														<ui:fragment
+															rendered="#{imageBean.hasImage(fishTypeBean.fishType.id)}">
+															<div class="form-group">
+																<label class="control-label col-sm-3" for="curImage">Current
+																	image:</label>
+																<div class="col-sm-9">
+																	<p class="form-control-static">
+																		<p:graphicImage id="curImage" styleClass="img-circle"
+																			height="96" value="#{imageBean.imageById}"
+																			cache="false">
+																			<f:param name="itemId"
+																				value="#{fishTypeBean.fishType.id}" />
+																		</p:graphicImage>
+																	</p>
+																</div>
+															</div>
+														</ui:fragment>
+														<div class="form-group">
+															<label class="control-label col-sm-3" for="image">Image:</label>
+															<div class="col-sm-9">
+																<p class="form-control-static">
+																	<h:inputFile id="image" mode="simple"
+																		value="#{fishTypeBean.image}" fileLimit="1" />
+																</p>
+															</div>
+
+														</div>
+														<h:message for="image"
+															class="alert alert-danger col-sm-9 col-sm-offset-3" />
+
+														<div class="btn-toolbar">
+															<h:commandButton value="Save"
+																action="#{fishTypeBean.saveFishType}"
+																styleClass="btn btn-primary pull-right"
+																onevent="reloadSelectpicker">
+															</h:commandButton>
+															<h:commandButton value="Reset"
+																actionListener="#{fishTypeBean.clear}"
+																styleClass="btn btn-default pull-right">
+																<f:ajax render="@form" />
+															</h:commandButton>
+														</div>
+													</div>
+												</h:form>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<!-- /.modal -->
+					</div>
+					<div class="col-sm-6">
+						<h3 class="text-center">Add Parcel</h3>
+						<h:form class="form-horizontal ">
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="name">Name:</label>
+								<div class="col-sm-9">
+									<h:inputText type="text" class="form-control " id="name"
+										value="#{parcelBean.parcel.name}" required="true"
+										requiredMessage="#{messageBean.required}" />
+
+								</div>
+
+							</div>
+							<h:message for="name"
+								class="alert alert-danger col-sm-9 col-sm-offset-3" />
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="description">Description:
+								</label>
+								<div class="col-sm-9">
+									<h:inputText class="form-control" id="description"
+										value="#{parcelBean.parcel.description}" rows="3"
+										required="false" requiredMessage="#{messageBean.required}" />
+								</div>
+
+							</div>
+							<h:message for="description"
+								class="alert alert-danger col-sm-9 col-sm-offset-3" />
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="shipName">Ship
+									Name:</label>
+								<div class="col-sm-9">
+									<h:inputText type="text" class="form-control" id="shipName"
+										value="#{parcelBean.parcel.shipName}" required="true"
+										requiredMessage="#{messageBean.required}" />
+								</div>
+
+							</div>
+							<h:message for="shipName"
+								class="alert alert-danger col-sm-9 col-sm-offset-3" />
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="deliveryPrice">Delivery
+									Price:</label>
+								<div class="col-sm-9">
+									<h:inputText type="text" class="form-control"
+										id="deliveryPrice" value="#{parcelBean.parcel.deliveryPrice}"
+										required="true" requiredMessage="#{messageBean.required}"
+										validatorMessage="#{messageBean.negative}">
+										<f:validateDoubleRange minimum="0.0" />
+									</h:inputText>
+								</div>
+
+							</div>
+							<h:message for="deliveryPrice"
+								class="alert alert-danger col-sm-9 col-sm-offset-3" />
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="arrivalDate">Arrival
+									Date:</label>
+								<div class="col-sm-9">
+									<div class='input-group date' id="arrival">
+										<h:inputText type='text' class="form-control"
+											value="#{parcelBean.parcel.arrivalDate}" id="arrivalDate"
+											required="true" requiredMessage="#{messageBean.required}">
+											<f:converter converterId="dateConverter" />
+										</h:inputText>
+										<span class="input-group-addon"> <span
+											class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<h:message for="arrivalDate"
+								class="alert alert-danger col-sm-9 col-sm-offset-3" />
+							<div class="btn-toolbar">
+								<h:commandLink value="Save" action="#{parcelBean.saveParcel}"
+									styleClass="btn btn-primary pull-right " />
+								<h:commandLink value="Remove"
+									action="#{parcelBean.removeParcel}"
+									styleClass="btn btn-danger pull-right " immediate="true"
+									rendered="#{parcelBean.parcel.id != 0}" />
+								<h:commandLink value="Cancel" action="#{parcelBean.clear}"
+									styleClass="btn btn-default pull-right " immediate="true" />
+							</div>
+						</h:form>
+					</div>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

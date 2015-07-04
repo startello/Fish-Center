@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">General Manager</ui:define>
+		<ui:define name="content">
+			<ui:fragment rendered="#{loginBean.user.type == 1}">
+				<div class="container">
+					<div class="col-sm-12">
+						<h3>Parcels</h3>
+						<h:form>
+							<h:dataTable value="#{generalManagerBean.unarrivedParcels}"
+								var="item" id="parcels" styleClass="table table-striped"
+								rendered="#{not empty generalManagerBean.unarrivedParcels}">
+								<h:column>
+									<f:facet name="header">Name</f:facet>
+									<h:outputText value="#{item.name} " />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Ship Name</f:facet>
+									<h:outputText value="#{item.shipName} " />
+
+								</h:column>
+								<h:column>
+									<f:facet name="header">Arrival Date</f:facet>
+									<h:outputText value="#{item.arrivalDate}">
+										<f:converter converterId="dateConverter" />
+									</h:outputText>
+								</h:column>
+								<h:column headerClass="table-button">
+									<f:facet name="header">Edit</f:facet>
+									<h:commandLink
+										class="btn btn-primary glyphicon glyphicon-pencil" value=""
+										action="#{parcelBean.editParcel(item.id)}"
+										style="padding:0; width:20px; height:20px; margin:0;">
+									</h:commandLink>
+								</h:column>
+							</h:dataTable>
+							<div class="btn-toolbar">
+								<h:commandButton value="Add" action="#{parcelBean.addParcel}"
+									styleClass="btn btn-primary pull-right " />
+							</div>
+						</h:form>
+
+					</div>
+					<div class="col-sm-12">
+						<ui:fragment rendered="#{not empty generalManagerBean.arrivedCsi}">
+							<h3>Cold Store Items</h3>
+							<h:form id="csiForm">
+								<h:dataTable value="#{generalManagerBean.arrivedCsi}" var="item"
+									styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Fish Type</f:facet>
+										<h:outputText value="#{item.fishType.name} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Weight Left</f:facet>
+										<h:outputText value="#{item.weightLeft} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Purchase Price</f:facet>
+										<h:outputText value="#{item.purchasePrice} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Price</f:facet>
+										<h:outputText value="#{item.sellingPrice} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Arrival Date</f:facet>
+										<h:outputText value="#{item.arrivalDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column headerClass="table-button">
+									<f:facet name="header">For Sale</f:facet>
+									<ui:fragment rendered="#{item.status==2}">
+										<div class="glyphicon glyphicon-ok"></div>
+									</ui:fragment>
+									<ui:fragment rendered="#{item.status==1}">
+										<div class="glyphicon glyphicon-remove"></div>
+									</ui:fragment>
+								</h:column>
+									<h:column headerClass="table-button">
+										<f:facet name="header">Write-off</f:facet>
+										<h:commandLink
+											styleClass="btn btn-primary glyphicon glyphicon-remove"
+											ps:data-toggle="modal" ps:data-target=".writeOff-modal">
+											<f:ajax render=":writeOffModalForm"
+												listener="#{parcelBean.writeOffModal(item.id)}" />
+										</h:commandLink>
+									</h:column>
+									<h:column headerClass="table-button">
+										<f:facet name="header">Sell</f:facet>
+										<h:commandLink
+											styleClass="btn btn-primary glyphicon glyphicon-usd"
+											ps:data-toggle="modal" ps:data-target=".sell-modal">
+											<f:ajax render=":sellModalForm"
+												listener="#{parcelBean.editCsi(item.id)}" />
+										</h:commandLink>
+									</h:column>
+								</h:dataTable>
+							</h:form>
+							<div class="modal fade sell-modal" role="dialog"
+								aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<h:form id="sellModalForm">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="gridSystemModalLabel">Sell
+													#{parcelBean.csi.fishType.name}</h4>
+											</div>
+											<div class="modal-body">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="form-horizontal">
+															<div class="form-group">
+																<label class="control-label col-sm-4" for="status">Availability:</label>
+																<div class="col-sm-8">
+																	<h:selectOneMenu styleClass="form-control selectpicker"
+																		id="status" value="#{parcelBean.csi.status}">
+																		<f:selectItems value="#{parcelBean.statuses}" />
+																	</h:selectOneMenu>
+																</div>
+															</div>
+															<h:message for="status"
+																class="alert alert-danger col-sm-8 col-sm-offset-4" />
+															<div class="form-group ">
+																<label class="control-label col-sm-4" for="price">Purchase
+																	Price:</label>
+																<div class="col-sm-8">
+																	<p class="form-control-static">#{parcelBean.csi.purchasePrice}</p>
+																</div>
+															</div>
+															<div class="form-group ">
+																<label class="control-label col-sm-4" for="price">Price:</label>
+																<div class="col-sm-8">
+																	<h:inputText styleClass="form-control" id="price"
+																		value="#{parcelBean.csi.sellingPrice}" required="true"
+																		requiredMessage="#{messageBean.required}"
+																		validatorMessage="Should be above 0.">
+																		<f:validateDoubleRange minimum="0.01" />
+																	</h:inputText>
+																</div>
+															</div>
+															<h:message for="price"
+																class="alert alert-danger col-sm-8 col-sm-offset-4" />
+															<div class="btn-toolbar">
+																<h:commandButton type="submit" value="Save"
+																	actionListener="#{generalManagerBean.init}"
+																	styleClass="btn btn-primary pull-right">
+																	<f:ajax execute="@form" render="@form :csiForm"
+																		listener="#{parcelBean.saveCsi}"
+																		onevent="reloadSelectpicker" />
+																</h:commandButton>
+																<button type="button" data-dismiss="modal"
+																	class="btn btn-default pull-right">Cancel</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</h:form>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+							<div class="modal fade writeOff-modal" role="dialog"
+								aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<h:form id="writeOffModalForm">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="gridSystemModalLabel">
+													Confirm Write-Off</h4>
+											</div>
+											<div class="modal-body">
+												<div class="container-fluid">
+													<div class="row">
+														<h5 style="margin-bottom: 40px;">
+															Do you really want to write-off
+															<h:outputText id="modalTitle"
+																value=" #{parcelBean.writeOffItem.fishType.name} " />
+															?
+														</h5>
+														<div class="form-horizontal">
+															<div class="btn-toolbar">
+																<h:commandButton type="submit" value="Write-Off"
+																	action="#{parcelBean.requestWriteOff}"
+																	styleClass="btn btn-primary pull-right">
+																</h:commandButton>
+																<button type="button" data-dismiss="modal"
+																	class="btn btn-default pull-right">Cancel</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</h:form>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+						</ui:fragment>
+					</div>
+					<div class="col-sm-12">
+						<h3>Users</h3>
+						<h:form id="usersForm">
+							<h:dataTable value="#{generalManagerBean.customers}" var="item"
+								styleClass="table table-striped"
+								rendered="#{not empty generalManagerBean.customers}">
+								<h:column>
+									<f:facet name="header">Name</f:facet>
+									<h:outputText value="#{item.name} #{item.surname}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">E-mail</f:facet>
+									<h:outputText value="#{item.email} " />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Prepayment</f:facet>
+									<h:outputText value="#{item.quota} %" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Creation Date</f:facet>
+									<h:outputText value="#{item.creationDate}">
+										<f:converter converterId="dateConverter" />
+									</h:outputText>
+								</h:column>
+								<h:column headerClass="table-button">
+									<f:facet name="header">Enabled</f:facet>
+									<ui:fragment rendered="#{item.status==0}">
+										<div class="glyphicon glyphicon-ok"></div>
+									</ui:fragment>
+									<ui:fragment rendered="#{item.status==1}">
+										<div class="glyphicon glyphicon-remove"></div>
+									</ui:fragment>
+								</h:column>
+								<h:column headerClass="table-button">
+									<f:facet name="header">Edit</f:facet>
+									<h:commandLink
+										styleClass="btn btn-primary glyphicon glyphicon-pencil" 
+										ps:data-toggle="modal" ps:data-target=".user-modal">
+										<f:ajax render=":userModalForm"
+											listener="#{userBean.edit(item.id)}" />
+									</h:commandLink>
+								</h:column>
+							</h:dataTable>
+						</h:form>
+						<div class="modal fade user-modal" role="dialog"
+							aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<h:form id="userModalForm">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+											<h4 class="modal-title" id="gridSystemModalLabel">Edit
+												#{userBean.user.name} #{userBean.user.surname}</h4>
+										</div>
+										<div class="modal-body">
+											<div class="container-fluid">
+												<div class="row">
+													<div class="form-horizontal">
+														<div class="form-group">
+															<label class="control-label col-sm-4" for="activity">Activity:</label>
+															<div class="col-sm-8">
+																<h:selectOneMenu styleClass="form-control selectpicker"
+																	id="activity" value="#{userBean.user.status}">
+																	<f:selectItems value="#{securityOfficerBean.statuses}" />
+																</h:selectOneMenu>
+															</div>
+
+														</div>
+														<h:message for="activity"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="form-group ">
+															<label class="control-label col-sm-4" for="name">Prepayment
+																(%):</label>
+															<div class="col-sm-8">
+																<h:inputText styleClass="form-control" id="name"
+																	value="#{userBean.user.quota}" required="true"
+																	requiredMessage="#{messageBean.required}"
+																	validatorMessage="Should be between 0 and 100.">
+																	<f:validateDoubleRange minimum="0" maximum="100" />
+																</h:inputText>
+															</div>
+														</div>
+														<h:message for="name"
+															class="alert alert-danger col-sm-8 col-sm-offset-4" />
+														<div class="btn-toolbar">
+															<h:commandButton type="submit" value="Save"
+																actionListener="#{generalManagerBean.init}"
+																styleClass="btn btn-primary pull-right">
+																<f:ajax execute="@form" render="@form :usersForm"
+																	listener="#{userBean.save}"
+																	onevent="reloadSelectpicker" />
+															</h:commandButton>
+															<button type="button" data-dismiss="modal"
+																class="btn btn-default pull-right">Cancel</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</h:form>
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<!-- /.modal -->
+					</div>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

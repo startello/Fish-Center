@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Cart</ui:define>
+		<ui:define name="content">
+			<div class="container">
+				<div class="col-sm-10 col-sm-offset-1">
+					<div class="panel panel-primary" style="margin-top: 24px;">
+						<div class="panel-heading">
+							<h3 class="panel-title">Cart</h3>
+						</div>
+						<h:form id="cartItems" styleClass="form-horizontal">
+							<div class="panel-body">
+								<p class="lead text-center">
+									<h:outputText value="Cart is empty"
+										rendered="#{empty cartBean.parcelOrder.parcelOrderItems}" />
+								</p>
+								<ui:fragment
+									rendered="#{not empty cartBean.parcelOrder.parcelOrderItems}">
+									<h:dataTable value="#{cartBean.parcelOrder.parcelOrderItems}"
+										var="item" styleClass="table table-striped">
+										<h:column>
+											<f:facet name="header">Fish Type</f:facet>
+											<h:outputText value="#{item.coldStoreItem.fishType.name} " />
+
+										</h:column>
+										<h:column>
+											<f:facet name="header">Weight Bought</f:facet>
+											<h:outputText value="#{item.weight} t" />
+
+										</h:column>
+										<h:column>
+											<f:facet name="header">Price</f:facet>
+											<h:outputText value="#{item.price} $" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">Cost</f:facet>
+											<h:outputText value="#{item.price*item.weight} $" />
+										</h:column>
+										<h:column>
+											<h:commandLink
+												class="btn btn-primary glyphicon glyphicon-minus"
+												actionListener="#{cartBean.removeFromCart(item.coldStoreItem.id)}">
+												<f:ajax render="@form :cartButton" />
+											</h:commandLink>
+										</h:column>
+									</h:dataTable>
+									<hr />
+									<div class="form-group col-sm-6">
+										<div class="form-group">
+											<label class="control-label col-sm-6" for="bankAccount">Bank
+												account:</label>
+											<div class="col-sm-6">
+												<h:inputText type="text" class="form-control"
+													id="bankAccount"
+													value="#{cartBean.parcelOrder.bankAccount}" required="true"
+													requiredMessage="#{messageBean.required}" />
+											</div>
+
+										</div>
+										<h:message for="bankAccount"
+											class="alert alert-danger col-sm-6 col-sm-offset-6" />
+									</div>
+									<div class="col-sm-6">
+										<label class="control-label col-sm-6" for="total">Total
+											cost:</label>
+										<div class="col-sm-6">
+											<p class="form-control-static" id="total">
+												<h:outputText id="totalText" value="#{cartBean.cardTotal} $" />
+											</p>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<label class="control-label col-sm-6" for="totalWeight">Total
+											weight:</label>
+										<div class="col-sm-6">
+											<p class="form-control-static" id="totalWeight">
+												<h:outputText id="totalWeightText"
+													value="#{cartBean.cardTotalWeight} t." />
+											</p>
+										</div>
+									</div>
+								</ui:fragment>
+							</div>
+							<ui:fragment
+								rendered="#{not empty cartBean.parcelOrder.parcelOrderItems}">
+								<div class="panel-footer">
+									<div class="btn-toolbar">
+										<ui:fragment rendered="#{loginBean.user.type == 0}">
+											<h:commandButton value="Confirm Order"
+												action="#{cartBean.confirmOrder(loginBean.user.email, loginBean.user.password)}"
+												styleClass="btn btn-primary pull-right " />
+										</ui:fragment>
+										<ui:fragment rendered="#{loginBean.user == null}">
+											<h:button value="Create New Account"
+												outcome="register"
+												styleClass="btn btn-primary pull-right " />
+										</ui:fragment>
+										<h:commandButton value="Clear"
+											actionListener="#{cartBean.clearCart}"
+											styleClass="btn btn-default pull-right ">
+											<f:ajax render="@form :cartButton" />
+										</h:commandButton>
+									</div>
+								</div>
+							</ui:fragment>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

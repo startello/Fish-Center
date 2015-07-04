@@ -1,0 +1,115 @@
+@CHARSET "UTF-8";
+
+body {
+	padding-top: 58px;
+	padding-bottom: 58px;
+}
+
+.page-header h1 {
+	font-size: 144px;
+	color: #009688;
+	font-style: italic;
+	font-weight: 900;
+}
+
+@media ( min-width : 992px) {
+	.container {
+		width: 950px;
+		margin-right: auto;
+		margin-left: auto;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+}
+
+.navbar .container {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.navbar .navbar-brand {
+	color: #fff;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.table {
+	font-size: 14px;
+}
+
+.modal-content .modal-header {
+	padding-bottom: 24px;
+}
+
+.glyphicon {
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	margin: 0;
+}
+
+.table>tbody>tr>td {
+	vertical-align: middle;
+}
+
+.fishtable>tbody>tr>td {
+	height: 65px;
+}
+
+.img-circle {
+	border-radius: 50%;
+	position: relative;
+	height: 64px;
+	width: 64px;
+	overflow: hidden;
+	float: left;
+	margin-right: 10px;
+	border: 2px solid #009688;
+}
+
+.img-circle.hor img {
+	position: absolute;
+	left: 50%;
+	width: auto;
+	height: 64px;
+	transform: translateX(-50%);
+}
+
+.img-circle.vert img {
+	position: absolute;
+	top: 50%;
+	width: 64px;
+	height: auto;
+	transform: translateY(-50%);
+}
+.bootstrap-select {
+	margin-top: 0;
+}
+.fishType { 
+	width:40%;
+}
+
+.weight { 
+	width:15%;
+}
+.price { 
+	width:15%;
+}
+.cart { 
+	width:16%;
+}
+.table-button { 
+	width:10%;
+}
+.image {
+	width:81px;
+}
+.check {
+	margin-right:8px;
+}
+.form-horizontal .checkbox {
+	padding-top:0;
+}
+.btn.btn-default.glyphicon {
+	color: #009688;
+}

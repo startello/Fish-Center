@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Create New Account</ui:define>
+		<ui:define name="content">
+			<div class="container">
+				<div class="col-sm-6 col-sm-offset-3">
+					<div class="panel panel-primary" style="margin-top: 24px;">
+						<div class="panel-heading">
+							<h3 class="panel-title">Create New Account</h3>
+						</div>
+						<div class="panel-body">
+							<h:form class="form-horizontal  ">
+								<div class="form-group ">
+									<label class="control-label col-sm-4" for="name">Name:</label>
+									<div class="col-sm-8">
+										<h:inputText styleClass="form-control" id="name"
+											value="#{registerBean.user.name}" required="true"
+											requiredMessage="#{messageBean.required}" />
+									</div>
+
+								</div>
+								<h:message for="name"
+									class="alert alert-danger col-sm-8 col-sm-offset-4" />
+								<div class="form-group">
+									<label class="control-label col-sm-4" for="surname">Surname:</label>
+									<div class="col-sm-8">
+										<h:inputText styleClass="form-control" id="surname"
+											value="#{registerBean.user.surname}" required="true"
+											requiredMessage="#{messageBean.required}" />
+									</div>
+
+								</div>
+								<h:message for="surname"
+									class="alert alert-danger col-sm-8 col-sm-offset-4" />
+								<hr />
+								<div class="form-group">
+									<label class="control-label col-sm-4" for="email">Email
+										address:</label>
+									<div class="col-sm-8">
+										<h:inputText styleClass="form-control" id="email"
+											value="#{registerBean.user.email}" required="true"
+											requiredMessage="#{messageBean.required}">
+											<f:validator validatorId="emailValidator" />
+											<f:validator validatorId="confirmEmailValidator" />
+											<f:attribute name="confirmEmail"
+												value="#{confirmE.submittedValue}" />
+										</h:inputText>
+									</div>
+
+								</div>
+								<h:message for="email"
+									class="alert alert-danger col-sm-8 col-sm-offset-4" />
+								<div class="form-group">
+									<label class="control-label col-sm-4" for="confirmEmail">Confirm
+										email address:</label>
+									<div class="col-sm-8">
+										<h:inputText styleClass="form-control" id="confirmEmail"
+											binding="#{confirmE}" required="true"
+											requiredMessage="#{messageBean.required}" />
+
+									</div>
+
+								</div>
+								<h:message for="confirmEmail"
+									class="alert alert-danger col-sm-8 col-sm-offset-4" />
+								<hr />
+								<div class="form-group">
+									<label class="control-label col-sm-4" for="password">Password:</label>
+									<div class="col-sm-8">
+										<h:inputSecret styleClass="form-control" id="password"
+											value="#{registerBean.user.password}" required="true"
+											requiredMessage="#{messageBean.required}">
+											<f:validator validatorId="passwordValidator" />
+											<f:validator validatorId="confirmPasswordValidator" />
+											<f:attribute name="confirmPassword"
+												value="#{confirmP.submittedValue}" />
+										</h:inputSecret>
+									</div>
+
+								</div>
+								<h:message for="password"
+									class="alert alert-danger col-sm-8 col-sm-offset-4" />
+								<div class="form-group">
+									<label class="control-label col-sm-4" for="confirmPassword">Confirm
+										password:</label>
+									<div class="col-sm-8">
+										<h:inputSecret styleClass="form-control" id="confirmPassword"
+											binding="#{confirmP}" required="true"
+											requiredMessage="#{messageBean.required}" />
+
+									</div>
+
+								</div>
+								<h:message for="confirmPassword"
+									class="alert alert-danger col-sm-8 col-sm-offset-4" />
+								<div class="btn-toolbar">
+									<h:commandLink value="Register"
+										action="#{registerBean.createNew}"
+										styleClass="btn btn-primary pull-right " />
+									<h:button value="Cancel" outcome="index"
+										styleClass="btn btn-default pull-right " />
+								</div>
+							</h:form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

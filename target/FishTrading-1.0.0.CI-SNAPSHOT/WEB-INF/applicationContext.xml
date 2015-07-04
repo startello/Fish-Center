@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/jdbc
+	http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+	http://cxf.apache.org/jaxws   
+	http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<context:component-scan base-package="com.bionic.fishtrading" />
+	<mvc:annotation-driven />
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+		<property name="url" value="jdbc:derby:..//FishCompanyDB;create=true" />
+	</bean>
+	<jdbc:initialize-database data-source="dataSource"
+		enabled="false">
+		<jdbc:script location="file:src/main/resources/db-schema.sql" />
+	</jdbc:initialize-database>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="packagesToScan" value="com.bionic.fishtrading" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="persistenceUnitName" value="FishM" />
+		<property name="jpaDialect">
+			<bean class="org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect" />
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean
+				class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+				<property value="true" name="showSql" />
+				<property value="true" name="generateDdl" />
+				<property name="databasePlatform"
+					value="org.eclipse.persistence.platform.database.DerbyPlatform" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="eclipselink.weaving" value="false" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<jaxws:endpoint id="goodsList"
+		implementor="#goodsListEndpointImpl"
+		address="/GoodsList" />
+
+</beans>

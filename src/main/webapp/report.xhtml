@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">Income Report</ui:define>
+
+		<ui:define name="content">
+
+			<ui:fragment rendered="#{loginBean.user.type == 1}">
+				<div class="container">
+					<div class="col-sm-6">
+						<h3>Select Report Range</h3>
+						<h:form class="form-horizontal">
+							<div class="form-group">
+								<div class="input-daterange" id="sandbox-container">
+									<label class="control-label col-sm-1" for="name">From</label>
+									<div class="col-sm-5">
+										<h:inputText type='text' styleClass="form-control"
+											value="#{incomeReportBean.startDate}" title="start"
+											required="true" requiredMessage="#{messageBean.required}">
+											<f:converter converterId="dateConverter" />
+										</h:inputText>
+									</div>
+									<label class="control-label col-sm-1">to</label>
+									<div class="col-sm-5">
+										<h:inputText type='text' styleClass="form-control"
+											value="#{incomeReportBean.endDate}" title="end"
+											required="true" requiredMessage="#{messageBean.required}">
+											<f:converter converterId="dateConverter" />
+										</h:inputText>
+									</div>
+								</div>
+							</div>
+							<div class="btn-toolbar">
+								<h:commandButton value="Update" type="submit"
+									action="#{incomeReportBean.update}"
+									styleClass="btn btn-primary pull-right">
+								</h:commandButton>
+								<h:commandButton value="Reset"
+									action="#{incomeReportBean.reset}" immediate="true"
+									styleClass="btn btn-default pull-right">
+								</h:commandButton>
+							</div>
+						</h:form>
+					</div>
+					<div class="col-sm-12">
+						<ui:fragment
+							rendered="#{not empty incomeReportBean.profitReportByDate}">
+
+							<h3>By Date</h3>
+							<h:form styleClass="form-horizontal">
+								<h:dataTable value="#{incomeReportBean.profitReportByDate}"
+									var="item" styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Date</f:facet>
+										<h:outputText value="#{item.key}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">Income Orders</f:facet>
+										<h:outputText value="#{item.value.incomeOrders} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Expense Orders</f:facet>
+										<h:outputText value="#{item.value.expenseOrders} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Income</f:facet>
+										<h:outputText value="#{item.value.income} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Expense</f:facet>
+										<h:outputText value="- #{item.value.expense} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Profit</f:facet>
+										<h:outputText
+											value="#{item.value.income - item.value.expense} " />
+									</h:column>
+								</h:dataTable>
+								<hr />
+								<div class="form-group">
+									<label class="control-label col-sm-1 col-sm-offset-3">Income:</label>
+									<div class="col-sm-2">
+										<p class="form-control-static">
+											<h:outputText value="#{incomeReportBean.incomeSumByDate}" />
+										</p>
+									</div>
+									<label class="control-label col-sm-1">Expense:</label>
+									<div class="col-sm-2">
+										<p class="form-control-static">
+											<h:outputText value="- #{incomeReportBean.expenseSumByDate}" />
+										</p>
+									</div>
+									<label class="control-label col-sm-1">Profit:</label>
+									<div class="col-sm-2">
+										<p class="form-control-static">
+											<h:outputText value="#{incomeReportBean.profitSumByDate}" />
+										</p>
+									</div>
+								</div>
+								<hr/>
+								<div class="form-group">
+									<p:chart type="line" model="#{incomeReportBean.dateModel}"
+										style="height:400px" />
+								</div>
+							</h:form>
+
+						</ui:fragment>
+						<ui:fragment
+							rendered="#{empty incomeReportBean.profitReportByDate}">
+							<h4>No Entries By Date</h4>
+						</ui:fragment>
+					</div>
+					<div class="col-sm-12">
+						<ui:fragment
+							rendered="#{not empty incomeReportBean.profitReportByFishType}">
+
+							<h3>By Fish Type</h3>
+							<h:form class="form-horizontal">
+								<h:dataTable value="#{incomeReportBean.profitReportByFishType}"
+									var="item" styleClass="table table-striped">
+									<h:column>
+										<f:facet name="header">Fish Name</f:facet>
+										<h:outputText value="#{item.key}">
+										</h:outputText>
+									</h:column>
+									<h:column>
+										<f:facet name="header">Income Orders</f:facet>
+										<h:outputText value="#{item.value.incomeOrders} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Expense Orders</f:facet>
+										<h:outputText value="#{item.value.expenseOrders} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Income</f:facet>
+										<h:outputText value="#{item.value.income} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Expense</f:facet>
+										<h:outputText value="- #{item.value.expense} " />
+									</h:column>
+									<h:column>
+										<f:facet name="header">Profit</f:facet>
+										<h:outputText
+											value="#{item.value.income - item.value.expense} " />
+									</h:column>
+								</h:dataTable>
+								<hr />
+								<div class="form-group">
+									<label class="control-label col-sm-1 col-sm-offset-3">Income:</label>
+									<div class="col-sm-2">
+										<p class="form-control-static">
+											<h:outputText value="#{incomeReportBean.incomeSumByFishType}" />
+										</p>
+									</div>
+									<label class="control-label col-sm-1">Expense:</label>
+									<div class="col-sm-2">
+										<p class="form-control-static">
+											<h:outputText
+												value="- #{incomeReportBean.expenseSumByFishType}" />
+										</p>
+									</div>
+									<label class="control-label col-sm-1">Profit:</label>
+									<div class="col-sm-2">
+										<p class="form-control-static">
+											<h:outputText value="#{incomeReportBean.profitSumByFishType}" />
+										</p>
+									</div>
+								</div>
+								<hr />
+								<div class="form-group">
+									<p:chart type="line" model="#{incomeReportBean.fishModel}"
+										style="height:400px" />
+								</div>
+							</h:form>
+						</ui:fragment>
+						<ui:fragment
+							rendered="#{empty incomeReportBean.profitReportByFishType}">
+							<h4>No Entries By Fish Type</h4>
+						</ui:fragment>
+					</div>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>

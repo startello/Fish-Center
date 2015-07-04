@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<h:html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ps="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+	<ui:composition template="/WEB-INF/templates/layout.xhtml">
+		<ui:define name="title">
+			<ui:fragment rendered="#{((parcelOrderBean.parcelOrder.status == 0)||(parcelOrderBean.parcelOrder.status == 1))}">Add Payments</ui:fragment>
+			<ui:fragment rendered="#{parcelOrderBean.parcelOrder.status == 4}">Return Payments</ui:fragment>
+		</ui:define>
+		<ui:define name="content">
+			<ui:fragment rendered="#{loginBean.user.type == 3}">
+				<div class="container">
+					<div class="col-sm-6" style="margin-top: 20px;">
+						<div class="panel panel-primary">
+							<div class="panel-heading">Payments</div>
+							<div class="panel-body">
+								<h:form id="payments">
+									<h:dataTable value="#{parcelOrderBean.parcelOrder.payments}"
+										var="item" styleClass="table table-striped" id="paymentsTable"
+										rendered="#{not empty parcelOrderBean.parcelOrder.payments}">
+										<h:column>
+											<f:facet name="header">Payed</f:facet>
+											<h:outputText value="#{item.sumPayed}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">Creation Date</f:facet>
+											<h:outputText value="#{item.creationDate}">
+												<f:converter converterId="dateConverter" />
+											</h:outputText>
+										</h:column>
+									</h:dataTable>
+									<hr />
+									<div class="form-group col-sm-6">
+										<label class="control-label col-sm-6" for="sumToPay">Sum
+											to pay: </label>
+										<div class="col-sm-6">
+											<p class="form-control-static" id="sumToPay">
+												<h:outputText
+													value="#{parcelOrderBean.parcelOrder.sumToPay}" />
+											</p>
+										</div>
+									</div>
+									<div class="form-group col-sm-6">
+										<label class="control-label col-sm-6" for="payed">Sum
+											payed: </label>
+										<div class="col-sm-6">
+											<p class="form-control-static" id="payed">
+												<h:outputText value="#{parcelOrderBean.payed}" />
+											</p>
+										</div>
+									</div>
+								</h:form>
+							</div>
+							<ui:fragment
+								rendered="#{parcelOrderBean.parcelOrder.status == 0}">
+								<div class="panel-footer">
+
+									<div class="btn-toolbar">
+										<button type="button" class="btn btn-primary pull-right"
+											data-toggle="modal" data-target=".add-payment-modal">Add</button>
+									</div>
+
+									<div class="modal fade add-payment-modal" role="dialog"
+										aria-labelledby="gridSystemModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+													<h4 class="modal-title" id="gridSystemModalLabel">Add
+														payment</h4>
+												</div>
+												<div class="modal-body">
+													<div class="container-fluid">
+														<div class="row">
+															<h:form class="form-horizontal">
+																<div class="form-group">
+																	<label class="control-label col-sm-3" for="leftToPay">Left
+																		to pay: </label>
+																	<div class="col-sm-9">
+																		<p class="form-control-static" id="leftToPay">
+																			<h:outputText
+																				value="#{parcelOrderBean.parcelOrder.sumToPay-parcelOrderBean.payed}" />
+																		</p>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<label class="control-label col-sm-3" for="sumPayed">Sum
+																		payed:</label>
+																	<div class="col-sm-9">
+																		<h:inputText type="text" class="form-control"
+																			id="sumPayed"
+																			value="#{parcelOrderBean.payment.sumPayed}"
+																			required="true"
+																			requiredMessage="#{messageBean.required}"
+																			validatorMessage="#{messageBean.range} Should be between 0.0 and 
+																	#{parcelOrderBean.parcelOrder.sumToPay-accountantBean.payed}.">
+																			<f:validateDoubleRange minimum="0.01"
+																				maximum="#{parcelOrderBean.parcelOrder.sumToPay-parcelOrderBean.payed}" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<h:message for="sumPayed"
+																	class="alert alert-danger col-sm-9 col-sm-offset-3" />
+
+																<div class="btn-toolbar">
+																	<h:commandButton value="Add"
+																		actionListener="#{parcelOrderBean.addPayment}"
+																		styleClass="btn btn-primary">
+																		<f:ajax execute="@form" render="@form :payments" />
+																	</h:commandButton>
+																</div>
+															</h:form>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+									<!-- /.modal -->
+								</div>
+							</ui:fragment>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<h3 class="text-center">Parcel order</h3>
+						<h:form class="form-horizontal">
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="name">Customer:</label>
+								<div class="col-sm-9">
+									<p class="form-control-static" id="name">
+										<h:outputText
+											value="#{parcelOrderBean.parcelOrder.user.name}  #{parcelOrderBean.parcelOrder.user.surname}" />
+									</p>
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="bankAccount">Bank
+									Account: </label>
+								<div class="col-sm-9">
+									<p class="form-control-static" id="bankAccount">
+										<h:outputText
+											value="#{parcelOrderBean.parcelOrder.bankAccount}" />
+									</p>
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="arrivalDate">Shipment
+									Date:</label>
+								<div class="col-sm-9">
+									<p class="form-control-static" id="arrivalDate">
+										<h:outputText
+											value="#{parcelOrderBean.parcelOrder.shipmentDate}">
+											<f:converter converterId="dateConverter" />
+										</h:outputText>
+									</p>
+								</div>
+							</div>
+							<div class="btn-toolbar">
+
+								<ui:fragment
+									rendered="#{((parcelOrderBean.parcelOrder.status == 0)||(parcelOrderBean.parcelOrder.status == 1))}">
+									<h:commandButton value="Save" action="#{parcelOrderBean.save}"
+										styleClass="btn btn-primary pull-right "/>
+								</ui:fragment>
+								<ui:fragment
+									rendered="#{parcelOrderBean.parcelOrder.status == 4}">
+									<h:commandButton value="Return"
+										action="#{parcelOrderBean.returnMoney}"
+										styleClass="btn btn-primary pull-right " />
+								</ui:fragment>
+								<h:commandButton type="reset" value="Cancel"
+									action="#{parcelOrderBean.cancel}"
+									styleClass="btn btn-default pull-right " />
+							</div>
+						</h:form>
+					</div>
+				</div>
+			</ui:fragment>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</h:html>
